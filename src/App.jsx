@@ -15,6 +15,12 @@ const SearchBar = ({ countries }) => {
     ); 
   }
 
+  const showCountry = (country) => {
+    setFilteredCountries([country]); 
+    setNewCountry(country.name)
+  }
+
+
   if (filteredCountries.length > 10) {
     return(
       <div>
@@ -49,7 +55,12 @@ const SearchBar = ({ countries }) => {
       <div>
         <input type="text" value={newCountry} onChange={handleChange}/>
         <ul>
-          {filteredCountries.map(item => <li key={item.id}>{item.name}</li>)}
+          {filteredCountries.map(item => 
+            <li key={item.id}>
+              <p>{item.name}</p>
+              <button onClick={() => showCountry(item)}>show</button>
+            </li>
+          )}
         </ul>
       </div>
     );
