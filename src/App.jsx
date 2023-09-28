@@ -1,6 +1,19 @@
 import { useEffect, useState } from 'react'
 import * as webController from './services/webController';
 
+const WeatherReport = () => {
+  useEffect(() => {
+    
+    console.log(webController.getWeather('London'))
+
+  }, []);
+
+  return(
+    <div>
+
+    </div>
+  )
+}
 
 const SearchBar = ({ countries }) => {
   const [newCountry, setNewCountry] = useState('');
@@ -34,7 +47,6 @@ const SearchBar = ({ countries }) => {
     )[0];
 
 
-    console.log(`Chosen country`, country);
     return(
       <div>
         <input type="text" value={newCountry} onChange={handleChange}/>
@@ -48,6 +60,7 @@ const SearchBar = ({ countries }) => {
           </ul>
         </div>
         <div style={{fontSize: 200}}>{country['flag']}</div>
+        <WeatherReport />
      </div>
     );
   } else {
@@ -65,49 +78,48 @@ const SearchBar = ({ countries }) => {
       </div>
     );
   }
-
-
 }
+
 
 function App() {
   const [countries, setCountries] = useState([]);
 
   useEffect(() => {
-      webController.getAll()
-        .then(intialCountries => {
-          setCountries(intialCountries.map((item) => {
-            let 
-                countryName = item['name']['common'],
-                capital = (item['capital'] === undefined) ? "No capital" : item['capital'][0],
-                area = (item['area'] === undefined) ? 'Unset' : item['area'],
-                languages = [],
-                flag = item['flag']
 
-            if (item['languages']) {
-              Object.keys(item['languages']).forEach((key) => {
-                languages.push(item['languages'][key]);
-              })
-            } else {
-              console.log("False language :D");
-              languages.push('No language determined');
-            }
-            
-            return {
-              name: countryName,
-              "capital": capital,
-              "area": area,
-              "languages": languages,
-              "flag": flag,
-              id: countryName
-            };
-          }));
-        })
+    webController.getAll()
+      .then(intialCountries => {
+        setCountries(intialCountries.map((item) => {
+          let 
+              countryName = item['name']['common'],
+              capital = (item['capital'] === undefined) ? "No capital" : item['capital'][0],
+              area = (item['area'] === undefined) ? 'Unset' : item['area'],
+              languages = [],
+              flag = item['flag']
+
+          if (item['languages']) {
+            Object.keys(item['languages']).forEach((key) => {
+              languages.push(item['languages'][key]);
+            })
+          } else {
+            languages.push('No language determined');
+          }
+          
+          return {
+            name: countryName,
+            "capital": capital,
+            "area": area,
+            "languages": languages,
+            "flag": flag,
+            id: countryName
+          };
+        }));
+      })
   }, []);
   
 
   return (
     <div>
-      <SearchBar countries={countries}/>
+      <SearchBar countries={countries} />
     </div>
   )
 }
