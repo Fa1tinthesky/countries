@@ -6,7 +6,10 @@ const
     base_url = "https://studies.cs.helsinki.fi/restcountries/api/all",
     countryDetailsUrl = "https://studies.cs.helsinki.fi/restcountries/api/name/"
 
-const weather_base_url = "http://api.openweathermap.org/geo/1.0/direct"
+const
+    geocodeUrl = "http://api.openweathermap.org/geo/1.0/direct",
+    weatherApiUrl = "https://api.openweathermap.org/data/2.5/weather";
+    // ?lat={lat}&lon={lon}&appid={API key}
 
 const getAll = () => {
     const request = axios.get(base_url);
@@ -14,23 +17,33 @@ const getAll = () => {
 }
 
 const getCoordinates = (countryName) => {
-    const request = axios.get(`${weather_base_url}?q=${countryName}&limit=5&appid=${api_key}`);
+    const request = axios.get(`${geocodeUrl}?q=${countryName}&limit=5&appid=${api_key}`);
+    let positionObj = {};
+
     request.then(response => {
         const weatherReport = response.data;
 
-        return({
-            'lat': weatherReport[0]['lat'],
-            'lon': weatherReport[0]['lon'],
-        })
+        positionObj.lat = weatherReport[0].lat;
+        positionObj.lon = weatherReport[0].lon;
     });
+
+    return(positionObj);
 }
 
 const getWeather = (countryName) => {
-    const { lat, lon } = getCoordinates(countryName);
-    return({lat, lon});
+    let countryPosition = getCoordinates(countryName);
+    let weatherReport;
+
+    console.log(`Lat: ${countryPosition['lon']}`);
+    const request = axios.get(`${weatherApiUrl}?lat=${countryPosition.lat}&lon=${countryPosition.lon}&appid=${api_key}`);
+    request.then(response => {
+        weatherReport = response.data;
+    })
+
+    console.log(weatherReport);
 }
 
 export {
     getAll, 
-    getWeather
+    getWeather,
 }
